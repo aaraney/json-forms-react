@@ -1,46 +1,52 @@
-import React, { useEffect, useRef, useState } from 'react';
-import {
-  materialRenderers,
-  materialCells,
-} from '@jsonforms/material-renderers';
-import schema from "./schema.json"
-import { JsonForms } from '@jsonforms/react';
+import React, { useState } from 'react';
+import schema_merged from "./ngencal.schema.json"
+import uischema from "./uischema.json"
+
+import Form from "@rjsf/material-ui";
+
+const log = (type: string) => console.log.bind(console, type);
+
+const schema_all: any = schema_merged
+const schema_ui: any = uischema
+
+const init_data = { 
+  general: {strategy: {type: "estimation", "algorithm":"dds", "objective":"kling_gupta"},
+            target: "min",
+            algorithm: "dds"
+          },
+  ngen:{type:"ngen",strategy:"uniform"}
+}
+
+const POST_URL = "https://test.gov"
+async function handleClick(data: any) {
+  const result = await fetch(POST_URL, { method: "POST" })
+  if (!result.ok) {
+    // do something
+  }
+}
 
 function App() {
   const [data, setData] = useState({});
   const [s, setS] = useState<object>({})
 
-  const [url, setUrl] = useState<string | undefined>(undefined)
-  const ref = useRef<HTMLInputElement>(null)
-
-  useEffect(() => {
-    console.log(url)
-    const f = async () => {
-      if (url === undefined) {
-        return
-      }
-      const res = await fetch(url)
-      const r = await res.json()
-      setS(r)
-    }
-    f()
-  }, [url, setS])
-
-
   return (
     <div>
       <div>
-        <input type="url" name="Enter schema url" id="url" ref={ref} />
-        <input type="button" onClick={() => { setUrl(ref.current?.value); console.log(ref.current?.value) }} />
 
       </div>
-      <JsonForms
-        schema={s}
+      {/* <JsonForms
+        schema={schema}
+        
         data={data}
         renderers={materialRenderers}
         cells={materialCells}
-      />
-
+      /> */}
+      <Form schema={schema_all} 
+            uiSchema={schema_ui} 
+            formData={init_data} 
+            onSubmit={log("submitted")}
+            />
+      {/* <Form schema={schema_ngen} uiSchema={schema_ui} /> */}
     </div>
 
   );

@@ -1,0 +1,21 @@
+{
+    "ngen":{
+        "type": {"ui:widget": "hidden"},
+        "realization": {
+            "ui:widget": "file", 
+            "ui:title": "Realization",
+            "ui:description": "NGen Realization file to initialize calibration from.",
+            "ui:options":{"accept":".json", "title": "Title",
+            "description": "Description"}},
+        "hydrofabric": {"ui:widget": "hidden"},
+        "ngen_realization": {"ui:widget": "hidden"},
+        
+        "strategy":{"ui:widget": "hidden"}
+    },
+    "general":{
+        "strategy":{ 
+            "type": {"ui:widget": "hidden"}
+        }
+    }
+    
+}

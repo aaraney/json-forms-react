@@ -14,10 +14,12 @@
       },
       "anyOf": [
         {
-          "$ref": "#/definitions/Estimation"
+          "$ref": "#/definitions/Estimation",
+          "title": "Estimation"
         },
         {
-          "$ref": "#/definitions/Sensitivity"
+          "$ref": "#/definitions/Sensitivity",
+          "title": "Sensitivity"
         }
       ]
     },
@@ -35,42 +37,10 @@
       "type": "string",
       "format": "date-time"
     },
-    "restart": {
-      "title": "Restart",
-      "default": false,
-      "type": "boolean"
-    },
-    "start_iteration": {
-      "title": "Start Iteration",
-      "default": 0,
-      "exclusiveMinimum": -1,
-      "type": "integer"
-    },
-    "workdir": {
-      "title": "Workdir",
-      "default": ".",
-      "format": "directory-path",
-      "type": "string"
-    },
     "name": {
       "title": "Name",
       "default": "ngen-calibration",
       "type": "string"
-    },
-    "log_file": {
-      "title": "Log File",
-      "type": "string",
-      "format": "path"
-    },
-    "parameter_log_file": {
-      "title": "Parameter Log File",
-      "type": "string",
-      "format": "path"
-    },
-    "objective_log_file": {
-      "title": "Objective Log File",
-      "type": "string",
-      "format": "path"
     },
     "random_seed": {
       "title": "Random Seed",
@@ -88,7 +58,8 @@
       "enum": [
         "dds"
       ],
-      "type": "string"
+      "type": "string",
+      "default":"dds"
     },
     "Objective": {
       "title": "Objective",
@@ -99,7 +70,9 @@
         "nnse",
         "single_peak",
         "volume"
-      ]
+      ],
+      "type":"string",
+      "default": "custom"
     },
     "Estimation": {
       "title": "Estimation",
@@ -107,11 +80,8 @@
       "type": "object",
       "properties": {
         "type": {
-          "title": "Type",
-          "enum": [
-            "estimation"
-          ],
-          "type": "string"
+          "const": "estimation",
+          "default": "estimation"
         },
         "algorithm": {
           "$ref": "#/definitions/Algorithm"
@@ -119,40 +89,32 @@
         "objective": {
           "title": "Objective",
           "default": "custom",
-          "anyOf": [
-            {
+          
               "$ref": "#/definitions/Objective"
-            },
-            {
-              "type": "string"
-            }
-          ]
+            
+          
         },
         "target": {
           "title": "Target",
           "default": "min",
-          "anyOf": [
+          "oneOf": [
             {
               "enum": [
-                "min"
-              ],
-              "type": "string"
-            },
-            {
-              "enum": [
+                "min",
                 "max"
               ],
-              "type": "string"
+              "type": "string",
+              "title":"Min/Max"
             },
             {
-              "type": "number"
+              "type": "number",
+              "title": "Value"
             }
           ]
         }
       },
       "required": [
-        "type",
-        "algorithm"
+        "type"
       ]
     },
     "Sensitivity": {
@@ -161,11 +123,7 @@
       "type": "object",
       "properties": {
         "type": {
-          "title": "Type",
-          "enum": [
-            "sensitivity"
-          ],
-          "type": "string"
+          "const":"sensitivity"
         }
       },
       "required": [

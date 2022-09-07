@@ -1,23 +1,166 @@
 {
-    "title": "Ngen",
-    "description": "Ngen configuration requirements",
-    "type":"object",
-    "descriminator": "strategy",
-    "anyOf": [
-        {
-            "$ref": "#/definitions/NgenIndependent",
-            "title": "Independent"
-        },
-        {
-            "$ref": "#/definitions/NgenExplicit",
-            "title": "Explicit"
-        },
-        {
-            "$ref": "#/definitions/NgenUniform",
-            "title": "Uniform"
-        }
-    ],
+    "type": "object",
+    "properties":{
+        "general":{"$ref": "#/definitions/General"},
+        "ngen": {"$ref": "#/definitions/NGen"}
+    },
     "definitions": {
+        "NGen":{
+            "title": "Ngen",
+            "description": "Ngen configuration requirements",
+            "type":"object",
+            "descriminator": "strategy",
+            "default": {"$ref": "#/definitions/NgenIndependent"},
+            "anyOf": [
+                {
+                    "$ref": "#/definitions/NgenIndependent",
+                    "title": "Independent"
+                },
+                {
+                    "$ref": "#/definitions/NgenExplicit",
+                    "title": "Explicit"
+                },
+                {
+                    "$ref": "#/definitions/NgenUniform",
+                    "title": "Uniform"
+                }
+            ]
+        },
+        "General":{
+            "title": "General",
+            "description": "General ngen-cal configuration requirements",
+            "type": "object",
+            "properties": {
+              "strategy": {
+                "title": "Strategy",
+                "discriminator": {
+                  "propertyName": "type",
+                  "mapping": {
+                    "estimation": "#/definitions/Estimation",
+                    "sensitivity": "#/definitions/Sensitivity"
+                  }
+                },
+                "anyOf": [
+                  {
+                    "$ref": "#/definitions/Estimation",
+                    "title": "Estimation"
+                  },
+                  {
+                    "$ref": "#/definitions/Sensitivity",
+                    "title": "Sensitivity"
+                  }
+                ]
+              },
+              "iterations": {
+                "title": "Iterations",
+                "type": "integer"
+              },
+              "evaluation_start": {
+                "title": "Evaluation Start",
+                "type": "string",
+                "format": "date-time"
+              },
+              "evaluation_stop": {
+                "title": "Evaluation Stop",
+                "type": "string",
+                "format": "date-time"
+              },
+              "name": {
+                "title": "Name",
+                "default": "ngen-calibration",
+                "type": "string"
+              },
+              "random_seed": {
+                "title": "Random Seed",
+                "type": "integer"
+              }
+            },
+            "required": [
+              "strategy",
+              "iterations"
+            ]
+        },
+        "Algorithm": {
+            "title": "Algorithm",
+            "description": "Enumeration of supported search algorithms\n\n    ",
+            "enum": [
+            "dds"
+            ],
+            "type": "string",
+            "default":"dds"
+        },
+        "Objective": {
+            "title": "Objective",
+            "description": "Enumeration of supported search algorithms\n\n    ",
+            "enum": [
+            "custom",
+            "kling_gupta",
+            "nnse",
+            "single_peak",
+            "volume"
+            ],
+            "type":"string",
+            "default": "custom"
+        },
+        "Estimation": {
+            "title": "Estimation",
+            "description": "Estimation strategy for defining parameter estimation",
+            "type": "object",
+            "properties": {
+            "type": {
+                "const": "estimation",
+                "default": "estimation"
+            },
+            "algorithm": {
+                "$ref": "#/definitions/Algorithm"
+            },
+            "objective": {
+                "title": "Objective",
+                "default": "custom",
+                
+                    "$ref": "#/definitions/Objective"
+                
+                
+            },
+            "target": {
+                "title": "Target",
+                "default": "min",
+                "oneOf": [
+                {
+                    "enum": [
+                    "min",
+                    "max"
+                    ],
+                    "default":"min",
+                    "type": "string",
+                    "title":"Min/Max"
+                },
+                {
+                    "type": "number",
+                    "title": "Value",
+                    "default":0
+                }
+                ]
+            }
+            },
+            "required": [
+            
+            ]
+        },
+        "Sensitivity": {
+            "title": "Sensitivity",
+            "description": "Sensitivity strategy for defining a sensitivity analysis\n\nNOT IMPLEMENTED",
+            "type": "object",
+            "properties": {
+            "type": {
+                "const":"sensitivity",
+                "default":"sensitivity"
+            }
+            },
+            "required": [
+            "type"
+            ]
+        },
         "TopmodParams": {
             "title": "TopmodParams",
             "description": "Class for validating Topmod Parameters\n    ",
@@ -739,7 +882,7 @@
         },
         "Parameter": {
             "title": "Parameter",
-            "description": "The data class for a given parameter",
+            "description": "A parameter known to the model to estimate, defined by a name, minimum, maximum, and initial value",
             "type": "object",
             "properties": {
                 "param": {
@@ -773,10 +916,7 @@
             "properties": {
                 "type": {
                     "title": "Type",
-                    "enum": [
-                        "ngen"
-                    ],
-                    "type": "string"
+                    "const":"ngen"
                 },
                 "realization": {
                     "title": "Realization",
@@ -788,16 +928,6 @@
                     "type": "string",
                     "readOnly": true
                 },
-                "params": {
-                    "title": "Params",
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/definitions/Parameter"
-                        }
-                    }
-                },
                 "strategy": {
                     "title": "Strategy",
                     "const":"independent"
@@ -806,7 +936,6 @@
             "required": [
                 "type",
                 "realization",
-                "catchments",
                 "strategy"
             ]
         },
@@ -817,10 +946,7 @@
             "properties": {
                 "type": {
                     "title": "Type",
-                    "enum": [
-                        "ngen"
-                    ],
-                    "type": "string"
+                    "const":"ngen"
                 },
                 "realization": {
                     "title": "Realization",
@@ -831,16 +957,6 @@
                     "title": "Hydrofabric",
                     "type": "string",
                     "readOnly": true
-                },
-                "params": {
-                    "title": "Params",
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/definitions/Parameter"
-                        }
-                    }
                 },
                 "strategy": {
                     "title": "Strategy",
@@ -872,16 +988,6 @@
                     "title": "Hydrofabric",
                     "type": "string",
                     "readOnly": true
-                },
-                "params": {
-                    "title": "Params",
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/definitions/Parameter"
-                        }
-                    }
                 },
                 "strategy": {
                     "title": "Strategy",
